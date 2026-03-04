@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Utility Toolbox</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+  body {
+    display: flex;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .sidebar {
+    width: 250px;
+    height: 100vh;
+    padding: 20px;
+    transition: background 0.3s;
+  }
+
+  .sidebar a {
+    display: block;
+    text-decoration: none;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .content {
+    flex: 1;
+    padding: 20px;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* LIGHT MODE */
+  body.light {
+    background: #f8f9fa;
+    color: #212529;
+  }
+
+  body.light .sidebar {
+    background: #ffffff;
+    color: #000;
+  }
+
+  body.light .sidebar a {
+    background: #e9ecef;
+    color: #000;
+  }
+
+  body.light .sidebar a:hover {
+    background: #ced4da;
+  }
+
+  /* DARK MODE */
+  body.dark {
+    background: #121212;
+    color: #ffffff;
+  }
+
+  body.dark .sidebar {
+    background: #1e1e1e;
+    color: #fff;
+  }
+
+  body.dark .sidebar a {
+    background: #2c2c2c;
+    color: #fff;
+  }
+
+  body.dark .sidebar a:hover {
+    background: #3a3a3a;
+  }
+
+  textarea {
+    background: inherit !important;
+    color: inherit !important;
+  }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+ 
+  <h4>Modules</h4>
+  <a onclick="loadModule('cardless')">Card to Cardless Box Conversion</a>
+  <a onclick="loadModule('comma')">Comma Formatter</a>
+  <a onclick="loadModule('duplicate')">Duplicate Counter</a>
+  <a onclick="loadModule('distinct')">Distinct Extractor</a>
+  <a onclick="loadModule('untrash')">Untrash STB Generator</a>
+   <hr>
+<button class="btn btn-sm btn-outline-secondary w-100" onclick="toggleDarkMode()">
+  Toggle Dark Mode
+</button>
+</div>
+
+<div class="content" id="mainContent">
+  <h3>Select a Module</h3>
+</div>
+
+<script>
+
+function loadModule(module) {
+  let content = "";
+
+  if (module === "cardless") {
+    content = `
+      <h3>Card to Cardless Box Conversion</h3>
+      <textarea id="input" class="form-control" rows="6" placeholder="Enter Serial Numbers (space/newline separated)"></textarea>
+      <button class="btn btn-primary mt-3" onclick="generateCardless()">Generate SQL</button>
+      <button class="btn btn-success mt-3" onclick="copyOutput()">Copy</button>
+      <button class="btn btn-danger mt-3" onclick="clearOutput()">Clear</button>
+      <textarea id="output" class="form-control mt-3" rows="8" readonly></textarea>
+    `;
+  }
+
+  if (module === "comma") {
+    content = `
+      <h3>Comma Formatter</h3>
+      <textarea id="input" class="form-control" rows="6" placeholder="Enter values (space/newline separated)"></textarea>
+      <button class="btn btn-primary mt-3" onclick="formatComma()">Format</button>
+      <button class="btn btn-success mt-3" onclick="copyOutput()">Copy</button>
+      <button class="btn btn-danger mt-3" onclick="clearOutput()">Clear</button>
+      <textarea id="output" class="form-control mt-3" rows="6" readonly></textarea>
+    `;
+  }
+
+  if (module === "duplicate") {
+    content = `
+      <h3>Duplicate Counter (MySQL Table)</h3>
+      <textarea id="input" class="form-control" rows="8" placeholder="Paste MySQL table output"></textarea>
+      <button class="btn btn-primary mt-3" onclick="countDuplicates()">Count Duplicates</button>
+      <button class="btn btn-success mt-3" onclick="copyOutput()">Copy</button>
+      <button class="btn btn-danger mt-3" onclick="clearOutput()">Clear</button>
+      <textarea id="output" class="form-control mt-3" rows="10" readonly></textarea>
+    `;
+  }
+
+  if (module === "distinct") {
+    content = `
+      <h3>Distinct Extractor (MySQL Table)</h3>
+      <textarea id="input" class="form-control" rows="8" placeholder="Paste MySQL table output"></textarea>
+      <button class="btn btn-primary mt-3" onclick="extractDistinct()">Extract Distinct</button>
+      <button class="btn btn-success mt-3" onclick="copyOutput()">Copy</button>
+      <button class="btn btn-danger mt-3" onclick="clearOutput()">Clear</button>
+      <textarea id="output" class="form-control mt-3" rows="10" readonly></textarea>
+    `;
+  }
+
+  if (module === "untrash") {
+    content = `
+        <div class="card-box">
+            <h3>STB Untrash SQL Generator</h3>
+
+            <div class="row">
+
+                <!-- SERIAL SECTION -->
+                <div class="col-6">
+                    <h5>Serial SQL Generator</h5>
+                    <label>Serial Numbers (alphanumeric)</label>
+                    <textarea id="serialInput" class="form-control" rows="4"
+                    placeholder="C0001000001 C0001000002"></textarea>
+
+                    <button class="btn btn-primary mt-3"
+                        onclick="generateSerialSQL()">Generate SELECT</button>
+                </div>
+
+                <!-- STOCK SECTION -->
+                <div class="col-6">
+                    <h5>Stock ID SQL Generator</h5>
+                    <label>Stock IDs (numbers only)</label>
+                    <textarea id="stockInput" class="form-control" rows="4"
+                    placeholder="101 102"></textarea>
+
+                    <button class="btn btn-warning mt-3"
+                        onclick="generateStockSQL()">Generate UPDATE</button>
+                </div>
+
+            </div>
+
+            <hr>
+
+            <button class="btn btn-success mt-2" onclick="copyOutput()">Copy</button>
+            <button class="btn btn-danger mt-2" onclick="clearOutput()">Clear</button>
+
+            <textarea id="output" class="form-control mt-3" rows="8" readonly></textarea>
+        </div>
+    `;
+}
+
+  document.getElementById("mainContent").innerHTML = content;
+}
+
+/* ---------------- FUNCTIONS ---------------- */
+
+function generateCardless() {
+  let values = getValues();
+  let quoted = values.map(v => `'${v}'`).join(",");
+  let sql = `select stock_id, serial_number, vc_number from eb_stock where serial_number in (${quoted});`;
+  appendOutput(sql);
+}
+
+function formatComma() {
+  let values = getValues();
+  appendOutput(values.join(","));
+}
+
+function countDuplicates() {
+  let lines = document.getElementById("input").value.split(/\r?\n/);
+  let data = [];
+
+  lines.forEach(line => {
+    if (line.startsWith("|") && !line.includes("serial_number")) {
+      let parts = line.split("|").map(x => x.trim()).filter(x => x !== "");
+      data.push(parts.join("|"));
+    }
+  });
+
+  let counts = {};
+  data.forEach(row => counts[row] = (counts[row] || 0) + 1);
+
+  let result = "";
+  for (let row in counts) {
+    if (counts[row] > 1) {
+      result += row + " => " + counts[row] + "\n";
+    }
+  }
+
+  appendOutput(result || "No duplicates found.");
+}
+
+function extractDistinct() {
+  let lines = document.getElementById("input").value.split(/\r?\n/);
+  let columns = [];
+
+  lines.forEach(line => {
+    if (line.startsWith("|") && !line.includes("serial_number")) {
+      let parts = line.split("|").map(x => x.trim()).filter(x => x !== "");
+
+      if (columns.length === 0) {
+        for (let i = 0; i < parts.length; i++) columns.push([]);
+      }
+
+      parts.forEach((val, i) => columns[i].push(val));
+    }
+  });
+
+  let result = columns.map(col => [...new Set(col)].join(",")).join("\n");
+  appendOutput(result);
+}
+
+function generateUntrash() {
+  let serials = getValues();
+  let quotedSerials = serials.map(v => `'${v}'`).join(",");
+
+  let selectQuery =
+`select stock_id, serial_number, vc_number, is_trash, trashed_date
+from eb_stock
+where serial_number in (${quotedSerials});`;
+
+  let updateQuery =
+`update eb_stock
+set is_trash = 0
+where stock_id in (/* paste stock_ids here */);`;
+
+  appendOutput(selectQuery + "\n\n" + updateQuery);
+}
+
+/* ---------------- UTILITIES ---------------- */
+
+function getValues() {
+  return document.getElementById("input").value
+    .split(/[\s,]+/)
+    .map(v => v.trim())
+    .filter(v => v !== "");
+}
+
+function appendOutput(text) {
+  let output = document.getElementById("output");
+  output.value += text + "\n\n";
+}
+
+function copyOutput() {
+  let output = document.getElementById("output");
+  output.select();
+  document.execCommand("copy");
+  alert("Copied!");
+}
+
+function clearOutput() {
+  document.getElementById("output").value = "";
+}
+
+// Load saved theme on start
+window.onload = function () {
+  let savedTheme = localStorage.getItem("theme") || "light";
+  document.body.classList.add(savedTheme);
+};
+
+function toggleDarkMode() {
+  if (document.body.classList.contains("dark")) {
+    document.body.classList.remove("dark");
+    document.body.classList.add("light");
+    localStorage.setItem("theme", "light");
+  } else {
+    document.body.classList.remove("light");
+    document.body.classList.add("dark");
+    localStorage.setItem("theme", "dark");
+  }
+}
+
+function generateSerialSQL() {
+
+    let raw = document.getElementById("serialInput").value.trim();
+
+    if (!raw) {
+        alert("Enter serial numbers.");
+        return;
+    }
+
+    let serials = raw
+        .split(/[\s,]+/)
+        .filter(x => x !== "")
+        .map(x => `'${x}'`)
+        .join(",");
+
+    let query = `select stock_id, serial_number, vc_number, is_trash, trashed_date 
+from eb_stock 
+where serial_number in (${serials});`;
+
+    appendOutput(query);
+}
+
+function generateStockSQL() {
+
+    let raw = document.getElementById("stockInput").value.trim();
+
+    if (!raw) {
+        alert("Enter stock IDs.");
+        return;
+    }
+
+    let stocks = raw
+        .split(/[\s,]+/)
+        .filter(x => x !== "")
+        .join(",");
+
+    let query = `update eb_stock 
+set is_trash = 0 
+where stock_id in (${stocks});`;
+
+    appendOutput(query);
+}
+
+</script>
+
+</body>
+</html>
