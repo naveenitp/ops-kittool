@@ -1,29 +1,35 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
-<title>STB Utility Toolkit</title>
-<link rel="icon" href="favicon.ico">
+<title>STB SQL Utility Toolkit</title>
 
 <style>
 
-body{
+*{
+box-sizing:border-box;
 margin:0;
-font-family:Segoe UI;
-background:#0f172a;
-color:white;
-display:flex;
-height:100vh;
+padding:0;
+font-family:Segoe UI,Arial;
 }
 
-.light{
-background:#f4f6fb;
+body{
+display:flex;
+height:100vh;
+background:#0f172a;
+color:#fff;
+}
+
+body.light{
+background:#f3f4f6;
 color:#111;
 }
 
 .sidebar{
 width:250px;
-background:#111827;
+background:#020617;
 padding:20px;
 display:flex;
 flex-direction:column;
@@ -34,22 +40,22 @@ margin-bottom:20px;
 }
 
 .sidebar button{
-margin:5px 0;
 padding:10px;
-background:#1f2937;
+margin-bottom:8px;
 border:none;
-color:white;
+background:#1e293b;
+color:#fff;
 cursor:pointer;
 border-radius:6px;
+text-align:left;
 }
 
 .sidebar button:hover{
-background:#374151;
+background:#334155;
 }
 
 .sidebar-footer{
 margin-top:auto;
-text-align:center;
 font-size:13px;
 opacity:0.7;
 }
@@ -66,15 +72,16 @@ display:none;
 
 textarea{
 width:100%;
-height:150px;
-background:#020617;
-color:#fff;
-border:1px solid #334155;
+height:140px;
 padding:10px;
+margin-top:10px;
 border-radius:6px;
+border:1px solid #334155;
+background:#020617;
+color:white;
 }
 
-.light textarea{
+body.light textarea{
 background:white;
 color:black;
 }
@@ -84,13 +91,9 @@ margin-top:10px;
 padding:10px 16px;
 background:#2563eb;
 border:none;
-border-radius:6px;
 color:white;
+border-radius:6px;
 cursor:pointer;
-}
-
-button.action:hover{
-background:#1d4ed8;
 }
 
 .card{
@@ -100,7 +103,7 @@ border-radius:10px;
 margin-bottom:20px;
 }
 
-.light .card{
+body.light .card{
 background:white;
 }
 
@@ -116,17 +119,14 @@ text-align:center;
 
 <div class="sidebar">
 
-<h2>STB Toolkit</h2>
+<h2>SQL Toolkit</h2>
 
-<button onclick="showModule('dashboard')">Dashboard</button>
-<button onclick="showModule('comma')">Comma Formatter</button>
-<button onclick="showModule('quote')">Quote Formatter</button>
-<button onclick="showModule('duplicate')">Duplicate Counter</button>
-<button onclick="showModule('distinct')">Distinct Extractor</button>
-<button onclick="showModule('untrash')">Untrash STB SQL</button>
-<button onclick="showModule('cardless')">Card → Cardless Conversion</button>
-<button onclick="showModule('employee')">Employee Filter Generator</button>
-<button onclick="showModule('append')">SQL Append Generator</button>
+<button onclick="show('dashboard')">Dashboard</button>
+<button onclick="show('comma')">Comma Formatter</button>
+<button onclick="show('quote')">Quote Formatter</button>
+<button onclick="show('distinct')">Distinct Extractor</button>
+<button onclick="show('employee')">Employee Filter</button>
+<button onclick="show('cardless')">Card → Cardless</button>
 
 <button onclick="toggleTheme()">Toggle Theme</button>
 
@@ -139,7 +139,7 @@ text-align:center;
 
 <div class="main">
 
-<!-- Dashboard -->
+<!-- DASHBOARD -->
 
 <div id="dashboard" class="module">
 
@@ -149,27 +149,27 @@ text-align:center;
 </div>
 
 <div class="card">
-<h3>Recent Operations</h3>
-<ul id="recentOps"></ul>
+<h3>Welcome</h3>
+<p>Internal SQL Utility Toolkit</p>
 </div>
 
 </div>
 
-<!-- Comma Formatter -->
+<!-- COMMA FORMATTER -->
 
 <div id="comma" class="module">
 
 <h2>Comma Formatter</h2>
 
-<textarea id="commaInput"></textarea>
+<textarea id="commaInput" placeholder="Paste numbers or table output"></textarea>
 
-<button class="action" onclick="formatComma()">Format</button>
+<button class="action" onclick="formatComma()">Generate</button>
 
 <textarea id="commaOutput"></textarea>
 
 </div>
 
-<!-- Quote Formatter -->
+<!-- QUOTE FORMATTER -->
 
 <div id="quote" class="module">
 
@@ -183,21 +183,7 @@ text-align:center;
 
 </div>
 
-<!-- Duplicate Counter -->
-
-<div id="duplicate" class="module">
-
-<h2>Duplicate Counter</h2>
-
-<textarea id="dupInput"></textarea>
-
-<button class="action" onclick="countDuplicates()">Check</button>
-
-<textarea id="dupOutput"></textarea>
-
-</div>
-
-<!-- Distinct Extractor -->
+<!-- DISTINCT -->
 
 <div id="distinct" class="module">
 
@@ -211,39 +197,7 @@ text-align:center;
 
 </div>
 
-<!-- Untrash -->
-
-<div id="untrash" class="module">
-
-<h2>Untrash STB SQL Generator</h2>
-
-<textarea id="serialInput" placeholder="Paste Serial Numbers"></textarea>
-
-<button class="action" onclick="generateSerialSQL()">Generate Serial SQL</button>
-
-<textarea id="serialSQL"></textarea>
-
-<textarea id="stockInput" placeholder="Paste Stock IDs"></textarea>
-
-<button class="action" onclick="generateStockSQL()">Generate Stock SQL</button>
-
-<textarea id="stockSQL"></textarea>
-
-</div>
-
-<!-- Cardless -->
-
-<div id="cardless" class="module">
-
-<h2>Card → Cardless Box Conversion</h2>
-
-<textarea placeholder="Paste serial numbers"></textarea>
-
-<button class="action">Generate</button>
-
-</div>
-
-<!-- Employee -->
+<!-- EMPLOYEE FILTER -->
 
 <div id="employee" class="module">
 
@@ -253,25 +207,23 @@ text-align:center;
 
 <button class="action" onclick="generateEmployee()">Generate</button>
 
-<textarea id="empIDs"></textarea>
+<textarea id="empIDs" placeholder="Employee IDs"></textarea>
 
-<textarea id="empCodes"></textarea>
+<textarea id="empCodes" placeholder="Codes"></textarea>
 
 </div>
 
-<!-- Append -->
+<!-- CARDLESS -->
 
-<div id="append" class="module">
+<div id="cardless" class="module">
 
-<h2>SQL Append Generator</h2>
+<h2>Card → Cardless Conversion</h2>
 
-<textarea id="appendSerial"></textarea>
+<textarea id="cardlessInput"></textarea>
 
-<textarea id="appendStock"></textarea>
+<button class="action" onclick="generateCardless()">Generate SQL</button>
 
-<button class="action" onclick="generateAppendSQL()">Generate SQL</button>
-
-<textarea id="appendOutput"></textarea>
+<textarea id="cardlessOutput"></textarea>
 
 </div>
 
@@ -279,17 +231,15 @@ text-align:center;
 
 <script>
 
-function showModule(id){
+function show(id){
 
 document.querySelectorAll(".module").forEach(m=>m.style.display="none");
 
 document.getElementById(id).style.display="block";
 
-addRecent(id);
-
 }
 
-showModule("dashboard");
+show("dashboard");
 
 function toggleTheme(){
 
@@ -302,11 +252,9 @@ function updateClock(){
 let now=new Date();
 
 document.getElementById("date").innerText=now.toDateString();
-
 document.getElementById("time").innerText=now.toLocaleTimeString();
 
 document.getElementById("dashDate").innerText=now.toDateString();
-
 document.getElementById("dashTime").innerText=now.toLocaleTimeString();
 
 }
@@ -315,17 +263,21 @@ setInterval(updateClock,1000);
 
 updateClock();
 
+/* COMMA FORMAT */
+
 function formatComma(){
 
 let input=document.getElementById("commaInput").value;
 
-input=input.replace(/\|/g," ");
+input=input.replace(/\|/g,'');
 
-let arr=input.split(/[\s,\n]+/).filter(v=>v!="");
+let arr=input.split(/[\s,\n,]+/).filter(v=>v!="");
 
 document.getElementById("commaOutput").value=arr.join(",");
 
 }
+
+/* QUOTE FORMAT */
 
 function formatQuote(){
 
@@ -333,151 +285,80 @@ let input=document.getElementById("quoteInput").value;
 
 let arr=input.split(/[\s,\n,]+/).filter(v=>v!="");
 
-let result=arr.map(v=>"'"+v+"'");
+let out=arr.map(v=>"'"+v+"'");
 
-document.getElementById("quoteOutput").value=result.join(",");
-
-}
-
-function countDuplicates(){
-
-let input=document.getElementById("dupInput").value.split(/[\n,]+/);
-
-let map={};
-
-input.forEach(v=>{
-
-v=v.trim();
-
-if(v!=""){
-
-map[v]=(map[v]||0)+1;
+document.getElementById("quoteOutput").value=out.join(",");
 
 }
 
-});
-
-let output="";
-
-for(let k in map){
-
-if(map[k]>1){
-
-output+=k+" = "+map[k]+"\n";
-
-}
-
-}
-
-document.getElementById("dupOutput").value=output;
-
-}
+/* DISTINCT */
 
 function extractDistinct(){
 
 let input=document.getElementById("distinctInput").value.split(/[\n,]+/);
 
-let set=[...new Set(input.map(v=>v.trim()).filter(v=>v!=""))];
+let unique=[...new Set(input.map(v=>v.trim()).filter(v=>v!=""))];
 
-document.getElementById("distinctOutput").value=set.join(",");
-
-}
-
-function generateSerialSQL(){
-
-let input=document.getElementById("serialInput").value;
-
-let arr=input.split(/[\n,]+/).map(v=>v.trim()).filter(v=>v!="");
-
-let quoted=arr.map(v=>"'"+v+"'");
-
-let sql="select stock_id, serial_number, vc_number, is_trash, trashed_date from eb_stock where serial_number in ("+quoted.join(",")+");";
-
-document.getElementById("serialSQL").value=sql;
+document.getElementById("distinctOutput").value=unique.join(",");
 
 }
 
-function generateStockSQL(){
-
-let input=document.getElementById("stockInput").value;
-
-let arr=input.split(/[\n,]+/).map(v=>v.trim()).filter(v=>v!="");
-
-let sql="update eb_stock set is_trash = 0 where stock_id in ("+arr.join(",")+");";
-
-document.getElementById("stockSQL").value=sql;
-
-}
+/* EMPLOYEE FILTER */
 
 function generateEmployee(){
 
 let lines=document.getElementById("empInput").value.split("\n");
 
 let ids=[];
-
 let codes=[];
 
 lines.forEach(line=>{
 
-let m=line.match(/\|\s*(\d+)\s*\|\s*([^\|]*)/);
+line=line.replace(/\|/g," ").trim();
 
-if(m){
+let p=line.split(/\s+/);
 
-let id=m[1];
+if(p.length>=2){
 
-let code=m[2].trim();
+let id=p[0];
+let code=p[1];
 
-if(code!=""){
+if(!isNaN(id)&&code!=""){
 
 ids.push(id);
 
-codes.push("'"+code.replace("#","").toLowerCase().substring(0,3)+"'");
+let clean=code.replace("#","").toLowerCase().substring(0,3);
+
+codes.push("'"+clean+"'");
 
 }
 
 }
 
 });
+
+codes=[...new Set(codes)];
 
 document.getElementById("empIDs").value=ids.join(",");
-
-document.getElementById("empCodes").value=[...new Set(codes)].join(",");
-
-}
-
-function generateAppendSQL(){
-
-let serial=document.getElementById("appendSerial").value.split(/[\n,]+/).map(v=>"'"+v.trim()+"'");
-
-let stock=document.getElementById("appendStock").value.split(/[\n,]+/).map(v=>v.trim());
-
-let sql="select stock_id, serial_number, vc_number from eb_stock where serial_number in ("+serial.join(",")+") or stock_id in ("+stock.join(",")+");";
-
-document.getElementById("appendOutput").value=sql;
+document.getElementById("empCodes").value=codes.join(",");
 
 }
 
-let recent=[];
+/* CARDLESS */
 
-function addRecent(op){
+function generateCardless(){
 
-recent.unshift(op);
+let input=document.getElementById("cardlessInput").value;
 
-recent=recent.slice(0,5);
+input=input.replace(/\|/g,'');
 
-let list=document.getElementById("recentOps");
+let arr=input.split(/[\s,\n,]+/).filter(v=>v!="");
 
-list.innerHTML="";
+let quoted=arr.map(v=>"'"+v+"'");
 
-recent.forEach(r=>{
+let sql="UPDATE eb_stock SET is_cardless=1 WHERE serial_number IN ("+quoted.join(",")+");";
 
-let li=document.createElement("li");
-
-li.innerText=r;
-
-list.appendChild(li);
-
-});
+document.getElementById("cardlessOutput").value=sql;
 
 }
 
@@ -485,3 +366,4 @@ list.appendChild(li);
 
 </body>
 </html>
+```
