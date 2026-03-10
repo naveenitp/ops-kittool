@@ -227,9 +227,24 @@ function generateCardless() {
   appendOutput(sql);
 }
 
-function formatComma() {
-  let values = getValues();
-  appendOutput(values.join(","));
+function formatCommaValues() {
+
+let input = document.getElementById("commaInput").value;
+
+// Remove pipes and trim spaces
+input = input.replace(/\|/g, " ").trim();
+
+// Split by newline, space, or comma
+let values = input.split(/[\n,\s]+/);
+
+// Remove empty values
+values = values.filter(v => v !== "");
+
+// Join as comma separated
+let output = values.join(",");
+
+document.getElementById("commaOutput").value = output;
+
 }
 
 function countDuplicates() {
@@ -410,6 +425,7 @@ updateDateTime();
 </body>
 
 </html>
+
 
 
 
